@@ -1,75 +1,86 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>何を話したら良いかな?</title>
+    <title>ランダム話題ボックス</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
             text-align: center;
             padding: 40px;
-            background: #f0f2f5;
+        }
+        .container {
+            max-width: 480px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         h2 {
-            font-size: 28px;
+            font-size: 24px;
             margin-bottom: 20px;
+            color: #444;
         }
         #topic {
-            font-size: 24px;
-            margin-top: 30px;
-            font-weight: bold;
-            line-height: 1.6;
+            font-size: 22px;
+            margin: 20px 0;
             padding: 20px;
-            background: white;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            min-height: 80px;
+            background: #f0f0ff;
+            border-radius: 10px;
+            display: none; /* 처음엔 숨김 */
         }
         button {
-            margin-top: 30px;
-            padding: 15px 28px;
+            padding: 12px 22px;
             font-size: 18px;
-            border-radius: 10px;
             border: none;
-            cursor: pointer;
-            background-color: #007bff;
+            border-radius: 8px;
+            background-color: #0078ff;
             color: white;
+            cursor: pointer;
+            margin-top: 10px;
         }
         button:hover {
-            background-color: #0066d3;
+            background-color: #005fcc;
         }
     </style>
 </head>
 <body>
 
-    <h2>🎲 何を話したら良いかな?</h2>
+<div class="container">
+    <h2>何を話したらいいかな？</h2>
 
-    <div id="topic">話題は...</div>
+    <div id="topic"></div>
 
-    <button onclick="pickTopic()">新し話題が欲しい！</button>
+    <button onclick="pickRandom()">新しい話題が欲しい</button>
+</div>
 
-    <script>
-        const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRvauNaDOjjlKLjj8wGnZEXdirxl1eL-eNej6O8rMu4LrPWptb0Nms8VO8gU_HBYdvTFZ65_LVsa1DL/pub?output=csv";
+<script>
+    let topics = [];
 
-        let topics = [];
+    async function loadCSV() {
+        const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRvauNaDOjjlKLjj8wGnZEXdirxl1eL-eNej6O8rMu4LrPWptb0Nms8VO8gU_HBYdvTFZ65_LVsa1DL/pub?output=csv";
 
-        // 구글시트 CSV 데이터 불러오기
-        fetch(sheetUrl)
-            .then(res => res.text())
-            .then(text => {
-                const rows = text.trim().split('\n');
-                topics = rows.slice(1);  // 헤더 제외
-                pickTopic();
-            });
+        const response = await fetch(url);
+        const data = await response.text();
 
-        // 랜덤 주제 뽑기
-        function pickTopic() {
-            if (topics.length === 0) return;
-            const random = topics[Math.floor(Math.random() * topics.length)];
-            document.getElementById("topic").textContent = random;
-        }
-    </script>
+        topics = data.split("\n").map(row => row.trim()).filter(row => row.length > 0);
+    }
+
+    function pickRandom() {
+        if (topics.length === 0) return;
+
+        const randomIndex = Math.floor(Math.random() * topics.length);
+        const topicBox = document.getElementById("topic");
+
+        topicBox.style.display = "block";
+        topicBox.textContent = topics[randomIndex];
+    }
+
+    loadCSV();
+</script>
 
 </body>
 </html>
