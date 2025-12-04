@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>랜덤 이야기 주제</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 40px;
+            background: #f0f2f5;
+        }
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        #topic {
+            font-size: 24px;
+            margin-top: 30px;
+            font-weight: bold;
+            line-height: 1.6;
+            padding: 20px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-height: 80px;
+        }
+        button {
+            margin-top: 30px;
+            padding: 15px 28px;
+            font-size: 18px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+        button:hover {
+            background-color: #0066d3;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🎲 랜덤 이야기 주제</h2>
+
+    <div id="topic">주제를 불러오는 중...</div>
+
+    <button onclick="pickTopic()">다시 뽑기</button>
+
+    <script>
+        const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRvauNaDOjjlKLjj8wGnZEXdirxl1eL-eNej6O8rMu4LrPWptb0Nms8VO8gU_HBYdvTFZ65_LVsa1DL/pub?output=csv";
+
+        let topics = [];
+
+        // 구글시트 CSV 데이터 불러오기
+        fetch(sheetUrl)
+            .then(res => res.text())
+            .then(text => {
+                const rows = text.trim().split('\n');
+                topics = rows.slice(1);  // 헤더 제외
+                pickTopic();
+            });
+
+        // 랜덤 주제 뽑기
+        function pickTopic() {
+            if (topics.length === 0) return;
+            const random = topics[Math.floor(Math.random() * topics.length)];
+            document.getElementById("topic").textContent = random;
+        }
+    </script>
+
+</body>
+</html>
